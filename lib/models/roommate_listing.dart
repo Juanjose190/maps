@@ -1,4 +1,4 @@
-// Archivo: roommate_listing.dart
+
 
 class RoommateListing {
   final String id;
@@ -66,9 +66,9 @@ class RoommateListing {
           ? List<String>.from(json['amenities'])
           : [],
       photos: json['photos'] != null ? List<String>.from(json['photos']) : [],
-      ownerName: json['owner_name'] ?? 'Usuario', // Campo de la vista SQL
-      ownerAvatar: json['owner_avatar'], // Campo de la vista SQL
-      ownerVerified: json['owner_verified'] ?? false, // Campo de la vista SQL
+      ownerName: json['owner_name'] ?? 'Usuario', 
+      ownerAvatar: json['owner_avatar'], 
+      ownerVerified: json['owner_verified'] ?? false, 
       bedrooms: json['bedrooms'],
       bathrooms: json['bathrooms'],
       furnished: json['furnished'] ?? false,
