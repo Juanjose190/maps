@@ -1,12 +1,10 @@
-// Archivo: map_view_widget.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/osm_place.dart';
-import '../models/roommate_listing.dart'; // IMPORTANTE: Nuevo Import
+import '../models/roommate_listing.dart';
 
-// Widget para mostrar UN lugar específico en el mapa (Maneja solo OsmPlace)
 class SinglePlaceMapView extends StatelessWidget {
   final OsmPlace place;
 
@@ -79,7 +77,7 @@ class SinglePlaceMapView extends StatelessWidget {
             ),
           ),
 
-          // Mapa
+      
           Expanded(
             child: FlutterMap(
               options: MapOptions(
@@ -120,7 +118,6 @@ class SinglePlaceMapView extends StatelessWidget {
             ),
           ),
 
-          // Info del lugar
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -181,16 +178,16 @@ class SinglePlaceMapView extends StatelessWidget {
   }
 }
 
-// Widget para mostrar TODOS los lugares en el mapa (CORREGIDO)
+
 class MapViewWidget extends StatefulWidget {
   final List<OsmPlace> places;
-  final List<RoommateListing> listings; // AÑADIDO: TUS listings de Supabase
+  final List<RoommateListing> listings; 
   final LatLng center;
 
   const MapViewWidget({
     Key? key,
     required this.places,
-    required this.listings, // Ahora es requerido
+    required this.listings, 
     this.center = const LatLng(1.2136, -77.2811),
   }) : super(key: key);
 
@@ -200,15 +197,15 @@ class MapViewWidget extends StatefulWidget {
 
 class _MapViewWidgetState extends State<MapViewWidget> {
   final MapController _mapController = MapController();
-  // Ahora _selectedItem puede ser un Place o un Listing
+  
   dynamic _selectedItem;
 
   @override
   Widget build(BuildContext context) {
-    // Combina los marcadores de Listings y de POIs de OSM
+
     final allMarkers = <Marker>[];
 
-    // 1. Crear marcadores para tus Listings de Roommate (Prioridad)
+    
     allMarkers.addAll(
       widget.listings
           .where((l) => l.latitude != null && l.longitude != null)
@@ -220,7 +217,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    _selectedItem = listing; // Selecciona un LISTING
+                    _selectedItem = listing; 
                   });
                   _mapController.move(
                     LatLng(listing.latitude!, listing.longitude!),
@@ -231,13 +228,13 @@ class _MapViewWidgetState extends State<MapViewWidget> {
                 },
                 child: _buildListingMarkerIcon(
                   listing,
-                ), // Ícono especial para listings
+                ), 
               ),
             );
           }),
     );
 
-    // 2. Crear marcadores para los POIs de OSM
+   
     allMarkers.addAll(
       widget.places.map((place) {
         return Marker(
@@ -247,7 +244,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
           child: GestureDetector(
             onTap: () {
               setState(() {
-                _selectedItem = place; // Selecciona un PLACE
+                _selectedItem = place; 
               });
               _mapController.move(
                 LatLng(place.lat, place.lon),
@@ -256,7 +253,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
                     : _mapController.camera.zoom,
               );
             },
-            child: _buildPOIMarkerIcon(place), // Ícono para POIs
+            child: _buildPOIMarkerIcon(place), 
           ),
         );
       }),
@@ -306,14 +303,14 @@ class _MapViewWidgetState extends State<MapViewWidget> {
                             'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.example.roommate_finder',
                       ),
-                      // Usamos la lista de marcadores combinados
+                      
                       MarkerLayer(markers: allMarkers),
                     ],
                   ),
 
                   Positioned(
                     right: 16,
-                    // Ajusta la posición del zoom si hay un elemento seleccionado
+                    
                     bottom: _selectedItem != null ? 220 : 100,
                     child: Column(
                       children: [
@@ -347,7 +344,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
                     ),
                   ),
 
-                  // Mostrar tarjeta de detalle según el tipo de elemento seleccionado
+                  
                   if (_selectedItem != null)
                     Positioned(
                       left: 16,
@@ -356,10 +353,10 @@ class _MapViewWidgetState extends State<MapViewWidget> {
                       child: _selectedItem is RoommateListing
                           ? _buildListingCard(
                               _selectedItem as RoommateListing,
-                            ) // Nuevo
+                            ) 
                           : _buildPlaceCard(
                               _selectedItem as OsmPlace,
-                            ), // Existente
+                            ), 
                     ),
                 ],
               ),
@@ -370,7 +367,6 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // Función para construir el encabezado del mapa (Modificada para el conteo)
   Widget _buildMapHeader() {
     return Container(
       padding: EdgeInsets.all(20),
@@ -421,7 +417,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // Zoom Button (No cambia)
+
   Widget _buildZoomButton({
     required IconData icon,
     required VoidCallback onPressed,
@@ -441,17 +437,16 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // NUEVA FUNCIÓN: Ícono para tus Listings (Diferenciación Visual)
   Widget _buildListingMarkerIcon(RoommateListing listing) {
-    Color color = Color(0xFFFF9800); // Color distintivo para tus listings
+    Color color = Color(0xFFFF9800); 
     IconData icon = Icons.house;
 
     if (listing.listingType == 'room') {
       icon = Icons.bed;
-      color = Color(0xFFE91E63); // Rosa fuerte para habitaciones
+      color = Color(0xFFE91E63);
     } else if (listing.listingType == 'apartment') {
       icon = Icons.apartment;
-      color = Color(0xFF4CAF50); // Verde para apartamentos
+      color = Color(0xFF4CAF50); 
     }
 
     return Container(
@@ -461,7 +456,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
         border: Border.all(
           color: Colors.white,
           width: 2,
-        ), // Borde para destacar
+        ), 
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.6),
@@ -474,17 +469,17 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // FUNCIÓN EXISTENTE MODIFICADA: Ícono para POI de OSM
+
   Widget _buildPOIMarkerIcon(OsmPlace place) {
     IconData icon = Icons.place;
-    Color color = Color(0xFF6C5CE7); // Color original para POIs
+    Color color = Color(0xFF6C5CE7); 
 
     if (place.amenity == 'university' || place.amenity == 'school') {
       icon = Icons.school;
       color = Color(0xFF2196F3);
     } else if (place.amenity == 'hospital') {
       icon = Icons.local_hospital;
-      color = Color(0xFF757575); // Color más neutro para no confundir
+      color = Color(0xFF757575); 
     } else if (place.amenity == 'supermarket') {
       icon = Icons.shopping_cart;
       color = Color(0xFFFFC107);
@@ -506,7 +501,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // NUEVA FUNCIÓN: Tarjeta de detalle para un RoommateListing
+
   Widget _buildListingCard(RoommateListing listing) {
     Color iconColor = Color(0xFFFF9800);
 
@@ -581,7 +576,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // FUNCIÓN EXISTENTE: Tarjeta de detalle para un OsmPlace
+
   Widget _buildPlaceCard(OsmPlace place) {
     IconData icon = Icons.place;
     Color iconColor = Color(0xFF6C5CE7);
@@ -654,7 +649,7 @@ class _MapViewWidgetState extends State<MapViewWidget> {
     );
   }
 
-  // Helper para las filas de información de la tarjeta de Listing
+ 
   Widget _buildInfoRow(IconData icon, String label, String value, Color color) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
